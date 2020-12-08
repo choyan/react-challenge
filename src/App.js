@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { LoadingIndicator } from 'shared';
 import ContactListView from './ContactListView';
 
 function App() {
   const [activeTab, setActiveTab] = useState('A');
   const [contactList, setContactList] = useState([]);
   const [contactGroup, setContactGroup] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   function changeTabFromSelect(e) {
     setActiveTab(e.target.value);
@@ -15,6 +17,7 @@ function App() {
   }, [activeTab, contactList]);
 
   useEffect(() => {
+    setIsLoading(true);
     setTimeout(async () => {
       try {
         await fetch(
@@ -44,54 +47,63 @@ function App() {
       } catch (err) {
         console.log('There was an error loading from the server');
       }
+      setIsLoading(false);
     }, [500]);
   }, []);
 
   return (
     <div className="w-full lg:w-11/12 mx-auto bg-gray-200 px-3 py-3 rounded-lg border border-gray-300 font-poppins">
-      <div className="sm:hidden">
-        <label htmlFor="tabs" className="sr-only">
-          Select a letter
-        </label>
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : (
+        <>
+          <div className="sm:hidden">
+            <label htmlFor="tabs" className="sr-only">
+              Select a letter
+            </label>
 
-        <select
-          id="tabs"
-          name="tabs"
-          className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-          onChange={changeTabFromSelect}
-        >
-          {Object.keys(contactList).map(function (keyName, keyIndex) {
-            return <option>{keyName}</option>;
-          })}
-        </select>
-      </div>
-      <div className="hidden sm:block">
-        <div className="border-b border-gray-200">
-          <nav className="flex flex-wrap" aria-label="Tabs">
-            {Object.keys(contactList).map(function (keyName, keyIndex) {
-              return (
-                <button
-                  key={keyIndex}
-                  className={`${
-                    keyName === activeTab
-                      ? 'border-indigo-500 text-indigo-600'
-                      : 'border-transparent text-gray-500'
-                  } relative flex-1 text-center hover:text-gray-800 focus:outline-none hover:border-gray-300 whitespace-nowrap py-3 px-3 mx-2 border-b-2 font-medium text-md cursor-pointer ${
-                    contactList[keyName].length === 0 && 'disabled:opacity-50'
-                  }`}
-                  onClick={() => setActiveTab(keyName)}
-                  disabled={contactList[keyName].length === 0}
-                >
-                  <span className="lowercase">{keyName}</span>
-                  <span className="absolute text-xs top-6 ml-3">{contactList[keyName].length}</span>
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
+            <select
+              id="tabs"
+              name="tabs"
+              className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              onChange={changeTabFromSelect}
+            >
+              {Object.keys(contactList).map(function (keyName, keyIndex) {
+                return <option>{keyName}</option>;
+              })}
+            </select>
+          </div>
+          <div className="hidden sm:block">
+            <div className="border-b border-gray-200">
+              <nav className="flex flex-wrap" aria-label="Tabs">
+                {Object.keys(contactList).map(function (keyName, keyIndex) {
+                  return (
+                    <button
+                      key={keyIndex}
+                      className={`${
+                        keyName === activeTab
+                          ? 'border-indigo-500 text-indigo-600'
+                          : 'border-transparent text-gray-500'
+                      } relative flex-1 text-center hover:text-gray-800 focus:outline-none hover:border-gray-300 whitespace-nowrap py-3 px-3 mx-2 border-b-2 font-medium text-md cursor-pointer ${
+                        contactList[keyName].length === 0 && 'disabled:opacity-50'
+                      }`}
+                      onClick={() => setActiveTab(keyName)}
+                      disabled={contactList[keyName].length === 0}
+                    >
+                      <span className="lowercase">{keyName}</span>
+                      <span className="absolute text-xs top-6 ml-3">
+                        {contactList[keyName].length}
+                      </span>
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          </div>
 
-      <ContactListView contactGroup={contactGroup} />
+          <ContactListView contactGroup={contactGroup} />
+        </>
+      )}
     </div>
   );
 }

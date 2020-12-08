@@ -1,5 +1,5 @@
 # React Challenge - Contact List
-This packaged is bootstrapped with 
+This packaged is bootstrapped with
  - Create React App
  - Prettier
  - Husky
@@ -15,7 +15,7 @@ git clone https://github.com/choyan/react-challenge.git
 
 Then install the dependencis using `yarn`
 ```
-yarn 
+yarn
 ```
 or NPM
 ```
@@ -23,6 +23,8 @@ npm install
 ```
 Then run using `yarn start` or `npm run start`
 
+# Build
+Build using `yarn build` or `npm run build`
+
 ## Extra Note
 Create React App doesn't let you override the PostCSS configuration natively, we also need to install CRACO to be able to configure Tailwind. (Note from Tailwind Doc)
-
